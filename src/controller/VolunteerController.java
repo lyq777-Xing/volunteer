@@ -1,14 +1,18 @@
 package controller;
 
+import entity.Team;
 import entity.User;
 import service.RoleService;
+import service.TeamService;
 import service.UserService;
 import service.impl.IRoleService;
+import service.impl.ITeamService;
 import service.impl.IUserService;
 
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.util.List;
 
 /**
  * @author lyq
@@ -18,6 +22,7 @@ public class VolunteerController {
 
     private static UserService userService = new IUserService();
     private static RoleService roleService = new IRoleService();
+    private static TeamService teamService = new ITeamService();
     public static void main(String[] args) throws IOException {
         while (true){
             mainMenu();
@@ -78,12 +83,75 @@ public class VolunteerController {
                                         break;
                                     case "3":
                                         // TODO: 2023/12/30 查询团队信息
+                                        User query1 = userService.query(userName);
+                                        if(query1.getTeamId() == -1){
+                                            System.out.println("你还没有加入团队！");
+                                        }else {
+                                            String query2 = teamService.query(query1.getTeamId());
+                                            System.out.println(query2);
+                                        }
                                         break;
                                     case "4":
                                         // TODO: 2023/12/30 加入或退出团队
+                                        User query3 = userService.query(userName);
+                                        if(query3.getTeamId() == -1){
+                                            System.out.println("请选择需要加入的团队：");
+                                            List<Team> all = teamService.findAll();
+                                            for (Team team : all) {
+                                                System.out.println(team);
+                                            }
+                                            System.out.println("请输入需要加入的团队的ID");
+                                            String teamId = bufferedReader.readLine();
+                                            if(teamId == null || teamId.trim().equals("")) continue;
+                                            if(userService.update(user.getId(), user.getUserName(), user.getPassword(), user.getRoleId(), user.getVolunteerHours(), Integer.parseInt(teamId), user.getIntroduce())){
+                                                System.out.println("加入成功！");
+                                            }else{
+                                                System.out.println("加入失败！");
+                                            }
+                                        }else {
+                                            System.out.println("你已经加入了团队，是否退出？");
+                                            System.out.println("1.是");
+                                            System.out.println("2.否");
+                                            String cmd4 = bufferedReader.readLine();
+                                            if(cmd4 == null || cmd4.trim().equals("")) continue;
+                                            switch (cmd4){
+                                                case "1":
+                                                    if(userService.update(user.getId(), user.getUserName(), user.getPassword(), user.getRoleId(), user.getVolunteerHours(), -1, user.getIntroduce())){
+                                                        System.out.println("退出成功！");
+                                                    }else{
+                                                        System.out.println("退出失败！");
+                                                    }
+                                                    break;
+                                                case "2":
+                                                    break;
+                                                default:
+                                                    System.out.println("输入错误，请重新输入！");
+                                                    break;
+                                            }
+                                        }
                                         break;
                                     case "5":
                                         // TODO: 2023/12/30 创建团队
+                                        System.out.println("请输入团队名称：");
+                                        String teamName = bufferedReader.readLine();
+                                        if(teamName == null || teamName.trim().equals("")){
+                                            System.out.println("团队名称不能为空！");
+                                            break;
+                                        }
+                                        if(teamName.length() > 20){
+                                            System.out.println("团队名称长度不能超过20！");
+                                            break;
+                                        }
+                                        if(teamService.add(teamName, user.getId())){
+                                            Team team = teamService.findByName(teamName);
+                                            if(userService.update(user.getId(), user.getUserName(), user.getPassword(), user.getRoleId(), user.getVolunteerHours(), team.getId(), user.getIntroduce())){
+                                                System.out.println("创建成功！");
+                                            }else{
+                                                System.out.println("创建失败！");
+                                            }
+                                        }else{
+                                            System.out.println("创建失败！");
+                                        }
                                         break;
                                     case "6":
                                         System.out.println("退出成功！");
@@ -137,6 +205,10 @@ public class VolunteerController {
                                         break;
                                     case "3":
                                         // TODO: 2023/12/30 查询团队信息
+                                        List<Team> all = teamService.findAll();
+                                        for (Team team : all) {
+                                            System.out.println(team);
+                                        }
                                         break;
                                     case "4":
                                         // TODO: 2023/12/30 修改团队信息

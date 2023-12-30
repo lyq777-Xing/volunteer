@@ -1,4 +1,4 @@
-package dao;
+package service;
 
 import entity.Team;
 
@@ -6,9 +6,9 @@ import java.util.List;
 
 /**
  * @author lyq
- * @time 2023/12/30 15:48
+ * @time 2023/12/30 17:12
  */
-public interface TeamDao {
+public interface TeamService {
     /**
      * @param id
      * @return

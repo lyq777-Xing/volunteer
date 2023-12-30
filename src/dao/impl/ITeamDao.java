@@ -8,6 +8,8 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Scanner;
 
 /**
@@ -117,6 +119,17 @@ public class ITeamDao implements TeamDao {
         }
         teams.close();
         return null;
+    }
+
+    @Override
+    public List<Team> findAll() {
+        ArrayList<Team> teams = new ArrayList<>();
+        Scanner file = getFile();
+        while (file.hasNextLine()) {
+            String[] team = file.nextLine().split(",");
+            teams.add(new Team(Integer.parseInt(team[0]), team[1], team[2]));
+        }
+        return teams;
     }
 
     public Scanner getFile(){
