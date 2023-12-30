@@ -2,12 +2,14 @@ package dao.impl;
 
 import dao.UserDao;
 import entity.User;
+import utils.LineUtils;
 import utils.UuidUtils;
 
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.nio.file.Path;
 import java.util.Scanner;
 
 /**
@@ -16,6 +18,8 @@ import java.util.Scanner;
  */
 public class IUserDao implements UserDao {
     UuidUtils uuidUtils = new UuidUtils();
+
+    LineUtils lineUtils = new LineUtils();
 
     @Override
     public boolean login(String userName, String password) {
@@ -50,58 +54,57 @@ public class IUserDao implements UserDao {
                 return true;
             } catch (IOException e) {
                 e.printStackTrace();
+            }finally {
+                users.close();
             }
         }
-        users.close();
         return false;
     }
 
     @Override
     public boolean update(String id,String userName, String password, String role, double volunteerHours, int teamId, String introduce) {
         Scanner users = getFile();
-        if(query(userName) != null){
-            return false;
-        }
+        int index = 0;
         while (users.hasNextLine()) {
             String s = users.nextLine();
             String[] user = s.split(",");
             if (user[0].equals(id)) {
-                try {
-                    FileWriter fileWriter = new FileWriter("src/data/user.txt");
-                    s = s.replaceAll(s,"");
-                    s= s+"\r\n";
-                    fileWriter.write(s);
-                    fileWriter.write(id + "," + userName + "," + password + "," + role + "," + volunteerHours + "," + teamId + "," + introduce + "\n");
-                    fileWriter.close();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-                return true;
+                break;
             }
+            index++;
         }
         users.close();
+        try {
+            lineUtils.removeLineInFile("src/data/user.txt",index);
+            FileWriter fileWriter = new FileWriter("src/data/user.txt", true);
+            fileWriter.write(id + "," + userName + "," + password + "," + role + "," + volunteerHours + "," + teamId + "," + introduce + "\n");
+            fileWriter.close();
+            return true;
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
         return false;
     }
 
     @Override
     public boolean delete(String id) {
         Scanner users = getFile();
+        int index = 0;
         while (users.hasNextLine()) {
             String s = users.nextLine();
-            if (s.contains(id)) {
-                try {
-                    FileWriter fileWriter = new FileWriter("src/data/user.txt");
-                    s = s.replaceAll(s, "");
-                    s = s + "\r\n";
-                    fileWriter.write(s);
-                    fileWriter.close();
-                    return true;
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
+            String[] user = s.split(",");
+            if (user[0].equals(id)) {
+                break;
             }
+            index++;
         }
         users.close();
+        try{
+            lineUtils.removeLineInFile("src/data/user.txt",index);
+            return true;
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
         return false;
     }
 

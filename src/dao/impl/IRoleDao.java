@@ -44,7 +44,7 @@ public class IRoleDao implements RoleDao {
                 return false;
             }
             try {
-                FileWriter fileWriter = new FileWriter("src/data/role.txt");
+                FileWriter fileWriter = new FileWriter("src/data/role.txt",true);
                 String id = lineUtils.getLines("src/data/role.txt") + 1 + "";
                 fileWriter.write(id + "," + roleName + "\n");
                 fileWriter.close();
@@ -60,21 +60,19 @@ public class IRoleDao implements RoleDao {
     @Override
     public boolean delete(int id) {
         Scanner roles = getFile();
+        int index = 0;
         while (roles.hasNextLine()) {
             String s = roles.nextLine();
             String[] role = s.split(",");
             if (role[0].equals(id)) {
-                try {
-                    FileWriter fileWriter = new FileWriter("src/data/role.txt");
-                    s = s.replaceAll(s, "");
-                    s = s + "\r\n";
-                    fileWriter.write(s);
-                    fileWriter.close();
-                    return true;
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
+                break;
             }
+            index++;
+        }
+        try {
+            lineUtils.removeLineInFile("src/data/role.txt",index);
+        } catch (IOException e) {
+            e.printStackTrace();
         }
         roles.close();
         return false;
@@ -86,24 +84,24 @@ public class IRoleDao implements RoleDao {
         if(findByName(roleName) != null){
             return false;
         }
+        int index = 0;
         while (roles.hasNextLine()) {
             String s = roles.nextLine();
             String[] role = s.split(",");
             if (role[0].equals(id)) {
-                try {
-                    FileWriter fileWriter = new FileWriter("src/data/role.txt");
-                    s = s.replaceAll(s,"");
-                    s= s+"\r\n";
-                    fileWriter.write(s);
-                    fileWriter.write(id + "," + roleName + "\n");
-                    fileWriter.close();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-                return true;
+                break;
             }
+            index++;
         }
         roles.close();
+        try {
+            lineUtils.removeLineInFile("src/data/role.txt",index);
+            FileWriter fileWriter = new FileWriter("src/data/role.txt",true);
+            fileWriter.write(id + "," + roleName + "\n");
+            fileWriter.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
         return false;
     }
 

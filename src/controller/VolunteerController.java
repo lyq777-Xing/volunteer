@@ -58,7 +58,8 @@ public class VolunteerController {
                                 switch (cmd1) {
                                     case "1":
                                         System.out.println("个人信息如下：");
-                                        System.out.println(user);
+                                        User query = userService.query(userName);
+                                        System.out.println(query);
                                         break;
                                     case "2":
                                         String userName1 = userName;
@@ -110,7 +111,8 @@ public class VolunteerController {
                                 switch (cmd3){
                                     case "1":
                                         System.out.println("个人信息如下：");
-                                        System.out.println(user);
+                                        User query = userService.query(userName);
+                                        System.out.println(query);
                                         break;
                                     case "2":
                                         System.out.println("请输入新的用户名：");
@@ -173,7 +175,8 @@ public class VolunteerController {
                                 switch (cmd2){
                                     case "1":
                                         System.out.println("个人信息如下：");
-                                        System.out.println(user);
+                                        User query = userService.query(userName);
+                                        System.out.println(query);
                                         break;
                                     case "2":
                                         String userName1 = userName;
