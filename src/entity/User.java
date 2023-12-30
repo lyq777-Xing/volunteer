@@ -4,7 +4,7 @@ public class User {
     private String id;
     private String userName;
     private String password;
-    private String role;
+    private String roleId;
     private double volunteerHours;
     private int teamId;
     private String introduce;
@@ -13,11 +13,11 @@ public class User {
     public User() {
     }
 
-    public User(String id, String userName, String password, String role, double volunteerHours, int teamId, String introduce) {
+    public User(String id, String userName, String password, String roleId, double volunteerHours, int teamId, String introduce) {
         this.id = id;
         this.userName = userName;
         this.password = password;
-        this.role = role;
+        this.roleId = roleId;
         this.volunteerHours = volunteerHours;
         this.teamId = teamId;
         this.introduce = introduce;
@@ -47,12 +47,12 @@ public class User {
         this.password = password;
     }
 
-    public String getRole() {
-        return role;
+    public String getRoleId() {
+        return roleId;
     }
 
-    public void setRole(String role) {
-        this.role = role;
+    public void setRoleId(String roleId) {
+        this.roleId = roleId;
     }
 
     public double getVolunteerHours() {
@@ -71,11 +71,11 @@ public class User {
         this.introduce = introduce;
     }
 
-    public int getTeam() {
+    public int getTeamId() {
         return teamId;
     }
 
-    public void setTeam(int teamId) {
+    public void setTeamId(int teamId) {
         this.teamId = teamId;
     }
 
@@ -85,7 +85,7 @@ public class User {
                 "id=" + id +
                 ", userName='" + userName + '\'' +
                 ", password='" + password + '\'' +
-                ", role='" + role + '\'' +
+                ", roleId='" + roleId + '\'' +
                 ", volunteerHours=" + volunteerHours +
                 ", teamId=" + teamId +
                 ", introduce='" + introduce + '\'' +

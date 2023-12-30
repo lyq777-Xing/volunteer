@@ -42,4 +42,9 @@ public class IUserService implements UserService {
     public User findById(String id) {
         return userDao.findById(id);
     }
+
+    @Override
+    public User findRoleIdByUserId(String roleId) {
+        return userDao.findRoleIdByUserId(roleId);
+    }
 }

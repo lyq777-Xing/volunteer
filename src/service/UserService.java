@@ -46,4 +46,11 @@ public interface UserService {
      * @return
      */
     public User findById(String id);
+
+    /**
+     * 根据用户id查询角色
+     * @param roleId
+     * @return
+     */
+    public User findRoleIdByUserId(String roleId);
 }

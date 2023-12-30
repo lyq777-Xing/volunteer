@@ -37,6 +37,7 @@ public interface UserDao {
     public boolean delete(String id);
 
     /**
+     * 根据用户名查询信息
      * @param userName
      * @return
      */
@@ -47,4 +48,12 @@ public interface UserDao {
      * @return
      */
     public User findById(String id);
+
+    /**
+     * 根据用户id查询角色
+     * @param roleId
+     * @return
+     */
+    public User findRoleIdByUserId(String roleId);
+
 }
