@@ -10,6 +10,8 @@ import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.file.Path;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Scanner;
 
 /**
@@ -144,6 +146,71 @@ public class IUserDao implements UserDao {
             }
         }
         users.close();
+        return null;
+    }
+
+    @Override
+    public List<User> findAllVolunteer() {
+        Scanner users = getFile();
+        ArrayList<User> userArrayList = new ArrayList<>();
+        while (users.hasNextLine()) {
+            String[] user = users.nextLine().split(",");
+            if (user[3].equals("1") || user[3].equals("4")){
+                userArrayList.add(new User(user[0], user[1], user[2], user[3], Double.parseDouble(user[4]), Integer.parseInt(user[5]), user[6]));
+            }
+        }
+        return userArrayList;
+    }
+
+    @Override
+    public List<User> findAllAdmin() {
+        Scanner users = getFile();
+        ArrayList<User> userArrayList = new ArrayList<>();
+        while (users.hasNextLine()) {
+            String[] user = users.nextLine().split(",");
+            if (user[3].equals("2") || user[3].equals("3")){
+                userArrayList.add(new User(user[0], user[1], user[2], user[3], Double.parseDouble(user[4]), Integer.parseInt(user[5]), user[6]));
+            }
+        }
+        return userArrayList;
+    }
+
+    @Override
+    public List<User> findUsersByTeamId(int teamId) {
+        Scanner users = getFile();
+        ArrayList<User> userArrayList = new ArrayList<>();
+        while (users.hasNextLine()) {
+            String[] user = users.nextLine().split(",");
+            if (user[5].equals(teamId)){
+                userArrayList.add(new User(user[0], user[1], user[2], user[3], Double.parseDouble(user[4]), Integer.parseInt(user[5]), user[6]));
+            }
+        }
+        return userArrayList;
+    }
+
+    @Override
+    public String resetPassword(String userId) {
+        Scanner users = getFile();
+        int index = 0;
+        while (users.hasNextLine()) {
+            String s = users.nextLine();
+            String[] user = s.split(",");
+            if (user[0].equals(userId)) {
+                break;
+            }
+            index++;
+        }
+        users.close();
+        User user = findById(userId);
+        try {
+            lineUtils.removeLineInFile("src/data/user.txt",index);
+            FileWriter fileWriter = new FileWriter("src/data/user.txt", true);
+            fileWriter.write(userId + ","+ user.getUserName()  + "," + "123456" + "," + user.getRoleId() + "," + user.getVolunteerHours() + "," + user.getTeamId() + "," + user.getIntroduce() + "\n");
+            fileWriter.close();
+            return "123456";
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
         return null;
     }
 

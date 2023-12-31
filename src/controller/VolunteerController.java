@@ -52,11 +52,13 @@ public class VolunteerController {
                             while (true) {
                                 System.out.println("欢迎进入志愿者管理系统");
                                 System.out.println("1.查询个人信息");
-                                System.out.println("2.修改个人信息");
+                                System.out.println("2.修改个人简介");
                                 System.out.println("3.查询团队信息");
                                 System.out.println("4.加入或退出团队");
                                 System.out.println("5.创建团队");
-                                System.out.println("6.退出");
+                                System.out.println("6.查询团队成员");
+                                System.out.println("7.修改密码");
+                                System.out.println("8.退出");
                                 System.out.println("请输入你的选择：");
                                 String cmd1 = bufferedReader.readLine();
                                 if (cmd1 == null || cmd1.trim().equals("")) continue;
@@ -154,6 +156,36 @@ public class VolunteerController {
                                         }
                                         break;
                                     case "6":
+                                        // TODO: 2023/12/31 查询团队成员
+                                        User query4 = userService.query(userName);
+                                        if(query4.getTeamId() == -1){
+                                            System.out.println("你还没有加入团队！");
+                                        }else {
+                                            List<User> all = userService.findUsersByTeamId(query4.getTeamId());
+                                            for (User user1 : all) {
+                                                if(user1.getTeamId() == query4.getTeamId()){
+                                                    System.out.println(user1);
+                                                }
+                                            }
+                                        }
+                                    case "7":
+                                        // TODO: 2023/12/31 修改密码
+                                        System.out.println("请输入新的密码：");
+                                        String password2 = bufferedReader.readLine();
+                                        if(password2 == null || password2.trim().equals("")){
+                                            System.out.println("密码不能为空！");
+                                            break;
+                                        }
+                                        if(password2.length() > 20){
+                                            System.out.println("密码长度不能超过20！");
+                                            break;
+                                        }
+                                        if(userService.update(user.getId(), user.getUserName(), password2, user.getRoleId(), user.getVolunteerHours(), user.getTeamId(), user.getIntroduce())){
+                                            System.out.println("修改成功！");
+                                        }else{
+                                            System.out.println("修改失败！");
+                                        }
+                                    case "8":
                                         System.out.println("退出成功！");
                                         System.exit(0);
                                         break;
@@ -172,7 +204,11 @@ public class VolunteerController {
                                 System.out.println("5.查询志愿者信息");
                                 System.out.println("6.修改志愿者信息");
                                 System.out.println("7.查询管理员信息");
-                                System.out.println("8.退出");
+                                System.out.println("8.修改个人密码");
+                                System.out.println("9.重置志愿者密码");
+                                System.out.println("10.更新志愿者时长");
+                                System.out.println("11.志愿者人数");
+                                System.out.println("12.退出");
                                 System.out.println("请输入你的选择：");
                                 String cmd3 = bufferedReader.readLine();
                                 if(cmd3 == null || cmd3.trim().equals("")) continue;
@@ -185,19 +221,19 @@ public class VolunteerController {
                                     case "2":
                                         System.out.println("请输入新的用户名：");
                                         String userName1 = bufferedReader.readLine();
-                                        System.out.println("请输入新的密码：");
-                                        String password1 = bufferedReader.readLine();
+//                                        System.out.println("请输入新的密码：");
+//                                        String password1 = bufferedReader.readLine();
                                         System.out.println("请输入新的个人简介：");
                                         String introduce = bufferedReader.readLine();
-                                        if(userName1 == null || userName1.trim().equals("") || password1 == null || password1.trim().equals("") || introduce == null || introduce.trim().equals("")){
+                                        if(userName1 == null || userName1.trim().equals("")|| introduce == null || introduce.trim().equals("")){
                                             System.out.println("用户名、密码或个人简介不能为空！");
                                             break;
                                         }
-                                        if(userName1.length() > 20 || password1.length() > 20 || introduce.length() > 200){
+                                        if(userName1.length() > 20 || introduce.length() > 200){
                                             System.out.println("用户名、密码或个人简介长度不能超过20、20、200！");
                                             break;
                                         }
-                                        if(userService.update(user.getId(), userName1, password1, user.getRoleId(), user.getVolunteerHours(), user.getTeamId(), introduce)){
+                                        if(userService.update(user.getId(), userName1, password, user.getRoleId(), user.getVolunteerHours(), user.getTeamId(), introduce)){
                                             System.out.println("修改成功！");
                                         }else{
                                             System.out.println("修改失败！");
@@ -212,18 +248,152 @@ public class VolunteerController {
                                         break;
                                     case "4":
                                         // TODO: 2023/12/30 修改团队信息
+                                        List<Team> teamList = teamService.findAll();
+                                        for (Team team : teamList) {
+                                            System.out.println(team);
+                                        }
+                                        System.out.println("请输入需要修改的团队的ID：");
+                                        String teamId = bufferedReader.readLine();
+                                        if(teamId == null || teamId.trim().equals("")) continue;
+                                        if(teamService.query(Integer.parseInt(teamId)) == null){
+                                            System.out.println("团队不存在！");
+                                            break;
+                                        }
+                                        System.out.println("请输入新的团队名称：");
+                                        String teamName = bufferedReader.readLine();
+                                        if(teamName == null || teamName.trim().equals("")){
+                                            System.out.println("团队名称不能为空！");
+                                            break;
+                                        }
+                                        if(teamName.length() > 20){
+                                            System.out.println("团队名称长度不能超过20！");
+                                            break;
+                                        }
+                                        if(teamService.update(Integer.parseInt(teamId), teamName)){
+                                            System.out.println("修改成功！");
+                                        }else{
+                                            System.out.println("修改失败！");
+                                        }
                                         break;
                                     case "5":
                                         // TODO: 2023/12/30 查询志愿者信息
+                                        List<User> allVolunteer = userService.findAllVolunteer();
+                                        for (User user1 : allVolunteer) {
+                                            System.out.println(user1);
+                                        }
                                         break;
                                     case "6":
                                         // TODO: 2023/12/30 修改志愿者信息
+                                        List<User> allVolunteer1 = userService.findAllVolunteer();
+                                        for (User user1 : allVolunteer1) {
+                                            System.out.println(user1);
+                                        }
+                                        System.out.println("请输入需要修改的志愿者的ID：");
+                                        String userId = bufferedReader.readLine();
+                                        if(userId == null || userId.trim().equals("")) continue;
+                                        if(userService.findById(userId) == null){
+                                            System.out.println("志愿者不存在！");
+                                            break;
+                                        }
+                                        System.out.println("请输入新的用户名：");
+                                        String userName2 = bufferedReader.readLine();
+                                        System.out.println("请输入新的密码：");
+                                        String password2 = bufferedReader.readLine();
+                                        System.out.println("请输入新的个人简介：");
+                                        String introduce1 = bufferedReader.readLine();
+                                        if(userName2 == null || userName2.trim().equals("") || password2 == null || password2.trim().equals("") || introduce1 == null || introduce1.trim().equals("")){
+                                            System.out.println("用户名、密码或个人简介不能为空！");
+                                            break;
+                                        }
+                                        if(userName2.length() > 20 || password2.length() > 20 || introduce1.length() > 200){
+                                            System.out.println("用户名、密码或个人简介长度不能超过20、20、200！");
+                                            break;
+                                        }
+                                        User user2 = userService.findById(userId);
+                                        if(userService.update(userId, userName2, password2, user2.getRoleId(), user2.getVolunteerHours(), user2.getTeamId(), introduce1)){
+                                            System.out.println("修改成功！");
+                                        }else{
+                                            System.out.println("修改失败！");
+                                        }
                                         break;
                                     case "7":
                                         // TODO: 2023/12/30 查询管理员信息
+                                        List<User> allAdmin = userService.findAllAdmin();
+                                        for (User user1 : allAdmin) {
+                                            System.out.println(user1);
+                                        }
                                         break;
                                     case "8":
-                                        System.out.println("退出成功！");
+                                        // TODO: 2023/12/31 修改个人密码
+                                        System.out.println("请输入新的密码：");
+                                        String password3 = bufferedReader.readLine();
+                                        if(password3 == null || password3.trim().equals("")){
+                                            System.out.println("密码不能为空！");
+                                            break;
+                                        }
+                                        if(password3.length() > 20){
+                                            System.out.println("密码长度不能超过20！");
+                                            break;
+                                        }
+                                        if(userService.update(user.getId(), user.getUserName(), password3, user.getRoleId(), user.getVolunteerHours(), user.getTeamId(), user.getIntroduce())){
+                                            System.out.println("修改成功！");
+                                            System.out.println("请重新登录！");
+                                            System.exit(0);
+                                        }else{
+                                            System.out.println("修改失败！");
+                                        }
+                                        break;
+                                    case "9":
+                                        // TODO: 2023/12/31 重置志愿者密码
+                                        List<User> allVolunteer2 = userService.findAllVolunteer();
+                                        for (User user1 : allVolunteer2) {
+                                            System.out.println(user1);
+                                        }
+                                        System.out.println("请输入需要重置密码的志愿者的ID：");
+                                        String userId1 = bufferedReader.readLine();
+                                        if(userId1 == null || userId1.trim().equals("")) continue;
+                                        if(userService.findById(userId1) == null){
+                                            System.out.println("志愿者不存在！");
+                                            break;
+                                        }
+                                        String s = userService.resetPassword(userId1);
+                                        if(s != null){
+                                            System.out.println("重置成功！");
+                                            System.out.println("新密码为：" + s);
+                                        }else{
+                                            System.out.println("重置失败！");
+                                        }
+                                        break;
+                                    case "10":
+                                        // TODO: 2023/12/31 更新志愿者时长
+                                        List<User> allVolunteer3 = userService.findAllVolunteer();
+                                        for (User user1 : allVolunteer3) {
+                                            System.out.println(user1);
+                                        }
+                                        System.out.println("请输入需要更新时长的志愿者的ID：");
+                                        String userId2 = bufferedReader.readLine();
+                                        if(userId2 == null || userId2.trim().equals("")) continue;
+                                        if(userService.findById(userId2) == null){
+                                            System.out.println("志愿者不存在！");
+                                            break;
+                                        }
+                                        User user1 = userService.findById(userId2);
+                                        System.out.println("请输入活动志愿者的时长(添加为正数，减少为负数)：");
+                                        String volunteerHours = bufferedReader.readLine();
+                                        if(volunteerHours == null || volunteerHours.trim().equals("")) continue;
+                                        if(userService.update(userId2, user1.getUserName(), user1.getPassword(), user1.getRoleId(), user1.getVolunteerHours() + Double.parseDouble(volunteerHours), user1.getTeamId(), user1.getIntroduce())){
+                                            System.out.println("更新成功！");
+                                        }else{
+                                            System.out.println("更新失败！");
+                                        }
+                                        break;
+                                    case "11":
+                                        // TODO: 2023/12/31 查询志愿者人数
+                                        List<User> allVolunteer4 = userService.findAllVolunteer();
+                                        System.out.println("志愿者人数为：" + allVolunteer4.size());
+                                        break;
+                                    case "12":
+                                          System.out.println("退出成功！");
                                         System.exit(0);
                                         break;
                                     default:
@@ -232,6 +402,7 @@ public class VolunteerController {
                                 }
                             }
                         } else if (roleId.equals("3")) {
+                            // TODO: 2023/12/31 待完善
 
                         } else if (roleId.equals("4")) {
                             while (true) {
@@ -240,7 +411,8 @@ public class VolunteerController {
                                 System.out.println("2.修改个人信息");
                                 System.out.println("3.查询团队信息");
                                 System.out.println("4.修改团队信息");
-                                System.out.println("5.退出");
+                                System.out.println("5.修改密码");
+                                System.out.println("6.退出");
                                 System.out.println("请输入你的选择：");
                                 String cmd2 = bufferedReader.readLine();
                                 if(cmd2 == null || cmd2.trim().equals("")) continue;
@@ -279,8 +451,32 @@ public class VolunteerController {
                                             System.out.println("团队名称长度不能超过20！");
                                             break;
                                         }
+                                        if(teamService.update(user.getTeamId(), teamName)){
+                                            System.out.println("修改成功！");
+                                        }else{
+                                            System.out.println("修改失败！");
+                                        }
                                         break;
                                     case "5":
+                                        // TODO: 2023/12/31 修改密码
+                                        System.out.println("请输入新的密码：");
+                                        String password2 = bufferedReader.readLine();
+                                        if(password2 == null || password2.trim().equals("")){
+                                            System.out.println("密码不能为空！");
+                                            break;
+                                        }
+                                        if(password2.length() > 20){
+                                            System.out.println("密码长度不能超过20！");
+                                            break;
+                                        }
+                                        if(userService.update(user.getId(), user.getUserName(), password2, user.getRoleId(), user.getVolunteerHours(), user.getTeamId(), user.getIntroduce())){
+                                            System.out.println("修改成功！");
+                                            System.out.println("请重新登录！");
+                                            System.exit(0);
+                                        }else{
+                                            System.out.println("修改失败！");
+                                        }
+                                    case "6":
                                         System.out.println("退出成功！");
                                         System.exit(0);
                                         break;
